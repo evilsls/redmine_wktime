@@ -1,0 +1,189 @@
+ <%= stylesheet_link_tag 'wk-time', :plugin => "redmine_wktime" %>
+
+
+  <%= javascript_include_tag 'edit', :plugin => "redmine_wktime" %>
+  
+	<script type="text/javascript"> 
+		var decSeparator = '<%=l(:general_csv_decimal_separator) %>';
+		issueField = '<%= l(:field_issue) %>';
+
+
+		editUrl = '<%=url_for(:controller => "wktime", :action => "edit", :mon => @mon, :user_id => params[:user_id])%>';
+		<% if !Setting.plugin_redmine_wktime['wktime_work_time_header'].blank? &&
+				Setting.plugin_redmine_wktime['wktime_work_time_header'].to_i == 1 %>
+				showWorkHeader = true;
+				footerRows = 2;
+				headerRows = 4;
+		<% end %>
+		<% if !Setting.plugin_redmine_wktime['wktime_allow_blank_issue'].blank? &&
+			Setting.plugin_redmine_wktime['wktime_allow_blank_issue'].to_i == 1 %>
+				allowBlankIssue = true;
+		<% end %>
+		<% if !Setting.plugin_redmine_wktime['wktime_enter_comment_in_row'].blank? &&
+			Setting.plugin_redmine_wktime['wktime_enter_comment_in_row'].to_i == 1 %>
+				commentInRow = true;
+		<% end %>
+	</script>
+
+	<div id="comment-dlg" title="<%= l(:label_attribute_plural) %>">
+	<!-- modified class .ui-widget-header to change the header color -->
+		<span id="_edit_comm_proj_">project</span>, 
+		<span id="_edit_comm_iss_">issue</span>,
+		<span id="_edit_comm_act_">activity)</span>
+		<fieldset>
+		<% if Setting.plugin_redmine_wktime['wktime_enter_comment_in_row'].blank? ||
+			Setting.plugin_redmine_wktime['wktime_enter_comment_in_row'].to_i == 0 %>
+			<p> <label><%= l(:field_comments) %></label>
+			<textarea name="_edit_comments_" id="_edit_comments_" value="" cols="25" rows="2"> </textarea> </p>
+		<% end %>
+
+		
+		<% if !Setting.plugin_redmine_wktime['wktime_use_detail_popup'].blank? &&
+			Setting.plugin_redmine_wktime['wktime_use_detail_popup'].to_i == 1 %>
+					
+			<% unless @new_custom_field_values.blank? %>
+				<p><%= l(:label_custom_field_plural) %></p>
+				<% 
+					cf_ids = ""
+					@new_custom_field_values.each do |custom_value|
+						custom_field = custom_value.custom_field
+						#if the custom field is not setup on the row
+						if !((!Setting.plugin_redmine_wktime['wktime_enter_cf_in_row1'].blank? &&
+							Setting.plugin_redmine_wktime['wktime_enter_cf_in_row1'].to_i == custom_field.id) ||
+							(!Setting.plugin_redmine_wktime['wktime_enter_cf_in_row2'].blank? &&
+							Setting.plugin_redmine_wktime['wktime_enter_cf_in_row2'].to_i == custom_field.id))
+							
+							if cf_ids.blank?
+								cf_ids = "_custom_field_values_#{custom_field.id}" 
+							else
+								cf_ids += ",_custom_field_values_#{custom_field.id}"
+							end
+				%>
+							<p><%= custom_field_tag_with_label '', custom_value %></p>
+						<% 	end %>
+
+				<% 	end %>
+				<script type="text/javascript"> cf_ids = '<%=cf_ids%>';</script>
+			<% end %>
+		<% end %>
+
+		</fieldset>
+
+	</div>
+
+	<div id="notes-dlg" title="<%= l(:button_wk_reject) %>">
+
+		<fieldset>
+			<p> <label><%= l(:label_wk_reject_reason) %></label>
+			<textarea name="_edit_notes_" id="_edit_notes_" value="" cols="25" rows="2"> </textarea> </p>
+		</fieldset>
+
+	</div>
+	
+<div style="display:none">
+<%# template row used by the 'add row' button %>
+<table id="issueTemplate">
+<tbody>
+
+	<% @row = 0 %>
+	<%= render :partial => 'edit_issues2', :locals => {:entry => nil, :isTemplate => true}%>
+	<%= render :partial => 'edit_hours', :locals => {:entry => nil, :isTemplate => true, :padAt => 'end', :padTill => 8}%>
+</tbody>
+</table>
+</div>
+
+<%= form_tag({:controller => 'wktime', :action => 'update'}, :method => :post, :id => 'wktime_edit') do %>
+
+<h2><%= l(:label_wktime) %></h2>
+
+
+							 
+<%= error_messages_for 'time_entry' %>
+<%= back_url_hidden_field_tag %>
+
+<%=h hidden_field_tag('getissues_url', "#{url_for(:controller => 'wktime', :action => 'getissues')}") %>
+<%=h hidden_field_tag('getactivities_url', "#{url_for(:controller => 'wktime', :action => 'getactivities')}") %>
+<%=h hidden_field_tag('deleterow_url', "#{url_for(:controller => 'wktime', :action => 'deleterow')}") %>
+
+
+<table>
+<tr>
+<th><%=l(:field_user)%></th>
+<td><%=h @user.login %>
+<%=h hidden_field_tag('user_id', @user.id) %>
+</td>
+<% if @editable %>
+	<% if !Setting.plugin_redmine_wktime['wktime_enter_issue_id'].blank? &&
+		Setting.plugin_redmine_wktime['wktime_enter_issue_id'].to_i == 1 %>
+	<td><%= check_box_tag('enter_issue_id', 1, (!params[:enter_issue_id].blank? && params[:enter_issue_id].to_i == 1), 
+		:onclick => "enterIssueId();") %></td>
+	<td><%= l(:label_wk_enter_issue_id) %></td>
+	<% end %>
+<% end %>
+</tr>
+<tr>
+<th><%=l(:field_start_date)%></th>
+<td><%=h format_date(@mon) %>
+<%=h hidden_field_tag('mon',@mon) %>
+</td>
+</tr>
+
+<tr>
+<th><%=l(:field_status)%></th>
+<% # the default status on new wktime object is 'new' %>
+<td><%=h statusString(@wktime.status) unless @wktime.blank? %>
+</td>
+</tr>
+
+<% if !@wktime.blank? && @wktime.status == 'r' && !@wktime.notes.blank? %>
+	<tr>
+	<th><%=l(:label_wk_reject_reason)%></th>
+	<td><%=h @wktime.notes %>
+	</td>
+	</tr>
+<% end %>
+
+			<% custom_values = @wktime.nil? ?  Wktime.new.custom_field_values : @wktime.custom_field_values %>
+			<% unless custom_values.blank? %>
+				<% 
+					# wk time custom fields
+					wkcf_ids = ""
+					custom_values.each do |custom_value|
+						custom_field = custom_value.custom_field
+						if wkcf_ids.blank?
+							wkcf_ids = "wktime_custom_field_values_#{custom_field.id}" 
+						else
+							wkcf_ids += ",wktime_custom_field_values_#{custom_field.id}"
+						end
+				%>
+						<tr><th><%= custom_field.name %></th>
+						<td>
+						<% if @editable %>
+							<%= custom_field_tag "wktime", custom_value %>
+						<% else %>
+							<%=h custom_value.value %>
+						<% end %>
+						</td></tr>
+
+				<% 	end %>
+				<!-- script type="text/javascript"> wkcf_ids = '<%=wkcf_ids%>';</script -->
+			<% end %>
+</table>
+
+<%= render :partial => 'edit_issues', :locals => { :entries => @prev_template ? @prev_entries : @entries }%>
+
+<% other_formats_links do |f| %>
+  <%= link_to 'CSV', url_for(:controller => 'wktime', :action => 'export', :mon => @mon, :user_id => params[:user_id]) + '&format=csv' %> | 
+  <%= link_to 'PDF', url_for(:controller => 'wktime', :action => 'export', :mon => @mon, :user_id => params[:user_id]) + '&format=pdf' %>
+<% end %>
+
+<% html_title l(:label_spent_time), l(:label_details) %>
+
+<% content_for :header_tags do %>
+    <%= auto_discovery_link_tag(:atom, {:issue_id => @issue, :format => 'atom', :key => User.current.rss_key}, :title => l(:label_spent_time)) %>
+<% end %>
+
+  <% #= link_to 'PDF', url_for(:controller => 'wktime', :action => 'export', :mon => @mon, :user_id => params[:user_id]) + '&format=pdf' %>
+
+
+<% end %>

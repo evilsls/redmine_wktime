@@ -1,0 +1,63 @@
+# French strings for wktime
+# Author Sylvain Hamel
+fr:
+  my_label: "Mon libellé"
+  label_wktime: Feuilles de temps
+  label_wk_project_dd_width: Largeur de la liste déroulante des projets
+  label_wk_issue_dd_width: Largeur de la liste déroulante des demandes
+  label_wk_actv_dd_width: Largeur de la liste déroulantes des activitésActivity Dropdown Width
+  label_wk_restr_max_hour: Restreindre le maximum d'heures par jour
+  label_wk_max_hour_day: Maximum d'heures par jour
+  label_wk_page_width: Largeur de page
+  label_wk_page_height: Hauteur de page
+  label_wk_margin_top: Marge supérieureTop Margin
+  label_wk_margin_bottom: Marge inférieure
+  label_wk_margin_left: Marge gauche
+  label_wk_margin_right: Marge droite
+  label_wk_line_space: Ligne d'espacement
+  label_wk_header_logo: Logo en-tête
+  label_wk_purchase_order: Commande
+  label_wk_signature: Signature
+  label_wk_submitted_by: Soumis par
+  label_wk_approved_by: Approuvé par
+  
+  label_wk_enter_issue_id: Utiliser l'ID pour saisir la demande
+  label_wk_work_time_header: Affichez l'entête effort
+  label_wk_allow_blank_issue: Permettre une demande vierge 
+  
+  label_wk_enter_comment_in_row: Saisir le commentaire sur la ligne
+  label_wk_enter_cf_in_row: Saisir le champ personalisé sur la ligne
+  label_wk_use_detail_popup: Utiliser la fenêtre de saisie détaillée du temps
+  label_wk_approval_system: Système d'approbation
+  label_wk_use_approval_system: Utiliser le système d'approbation
+  label_wk_auto_approve: Approuver les feuilles de temps automatiquement
+  label_wk_submission_ack: Texte de l'accusé de soumission
+  label_wk_reject_reason: Raison du rejet
+  
+  label_start: Début
+  label_end: Fin
+  label_remaining_hours: Heures restantes
+  
+  button_new_wktime: Nouvelle feuille de temps
+  button_continue: Continuer
+  button_add_row: Ajouter ligne
+  
+  button_wk_unsubmit: Dé-soumettre
+  button_wk_approve: Approuver
+  button_wk_reject: Rejeter
+  button_wk_unapprove: Unapprove
+  
+  chkbox_prev_tmpl: Utiliser la semaine précédente comme gabarit
+  chkbox_closed_issues: Inclure demandes fermées
+  
+  error_wktime_save_failed: "Impossible d'enregistrer la feuille de temps: %{value}"
+  error_wktime_save_nothing: Rien à enregistrer
+  error_not_permitted_save: Sauvegarde interdite
+  
+  wk_status_new: Nouvelle
+  wk_status_submitted: Soumise
+  wk_status_approved: Approuvée
+  wk_status_rejected: Rejetée
+
+  
+

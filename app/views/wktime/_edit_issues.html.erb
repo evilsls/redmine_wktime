@@ -1,0 +1,131 @@
+<% 
+@wday_index = 1 
+@trOpen = false
+@row = 0
+@total_hours = 0.0
+thours = nums = Array[0.0, 0.0, 0.0, 0.0,0.0, 0.0, 0.0]
+prev_entry = nil
+entry = nil 
+%>
+
+<div class="wk-contextual">
+<% if @editable %>
+	<%= link_to l(:button_add_row), "javascript:addRow();", :class => 'icon icon-time-add' %>
+<% end %>
+</div>
+
+<table id="issueTable" class="list time-entries">
+<thead>
+<tr>
+	<%= render :partial => 'issue_header'%>
+</tr>
+</thead>
+<tbody>
+
+<% unless entries.blank?
+	col_values = []
+	matrix_values = []
+	weeklyHash = getWeeklyView(entries, false)
+	weeklyHash.each do |key, matrix|
+		matrix.each do |rows|
+			issueWritten = false
+			rows.each.with_index do |entry, i|
+%>
+
+				
+				<% if !entry.blank? %>
+					<% if !issueWritten %>
+						<% # this is a new Row %>
+						<% # close the previously opened row first %>
+						<%= render :partial => 'edit_hours', :locals => {:entry => nil, :isTemplate => false,
+							:padAt => 'end', :padTill => 8}%>
+					
+						<%= render :partial => 'edit_issues2', :locals => {:entry => entry, :isTemplate => false}%>		
+						<% issueWritten = true %>
+					<% end %>
+					<% # fill the days till the current day %>
+					<%= render :partial => 'edit_hours', :locals => {:entry => nil, :isTemplate => false, 
+							:padAt => 'begin', :padTill => i+1}%>
+					<%= render :partial => 'edit_hours', :locals => {:entry => entry, :isTemplate => false, 
+					:padAt => 'begin', :padTill => i+2}%>	
+					<% thours[i] += entry.hours unless @prev_template%>
+					<% @total_hours += entry.hours unless @prev_template%>					
+				<% end %>
+			<% end %>
+		<% end %>
+	<% end %>
+
+<% else -%>
+	<% # if there are no entries, put an empty row%>
+	<%= render :partial => 'edit_issues2', :locals => {:entry => nil, :isTemplate => false}%>
+<% end %>
+	
+	<% # pad any incomplete days %>
+	<%= render :partial => 'edit_hours', :locals => {:entry => nil, :isTemplate => false,
+		:padAt => 'end', :padTill => 8}%>
+
+	<!-- row for putting the total -->
+	<tr>
+	<td class="project"></td>
+	<td class="issue"></td>
+	<td class="activity"></td>
+	<td class="comments"></td>
+	<td></td>
+	<td></td>
+
+	<% thours.each do |th| %>
+		<td align="center"><%= th %></td>
+	<% end %>
+	<td>
+	<b>	<%= l(:label_total) %>: <span id="total_hours"><%= @total_hours.round(2) %></span></b>
+	<%=h hidden_field_tag('total', @total_hours.round(2)) %>
+	</td>
+	</tr>	
+	
+	<% if !Setting.plugin_redmine_wktime['wktime_work_time_header'].blank? &&
+		Setting.plugin_redmine_wktime['wktime_work_time_header'].to_i == 1 %>
+		<!-- Remaining Hours -->
+		<%= render :partial => 'worktime_header', :locals => {:str => 'remaining_hours', :isEditable => false, :value => '0.0'}%>
+	<% end %>
+</tbody>
+</table>
+
+<% if @wktime.nil? || @wktime.status == 'n' || @wktime.status == 'r' %>
+	<%= submit_tag l(:button_save), :id => 'wktime_save', :name => 'wktime_save', :disabled => !(@row > 0)%>
+	<% if !Setting.plugin_redmine_wktime[:wktime_use_approval_system].blank? &&
+			Setting.plugin_redmine_wktime[:wktime_use_approval_system].to_i == 1 %>
+		<% if Setting.plugin_redmine_wktime[:wktime_submission_ack].blank? %>
+			<%= submit_tag l(:button_submit),:id => 'wktime_submit', :name => 'wktime_submit', :disabled => !(@row > 0)%>
+		<% else %>
+			<%= submit_tag l(:button_submit),:id => 'wktime_submit', :name => 'wktime_submit', 
+			:confirm => Setting.plugin_redmine_wktime[:wktime_submission_ack], :disabled => !(@row > 0)%>
+		<% end %>
+	<% end %>
+<% end %>
+<% if !Setting.plugin_redmine_wktime[:wktime_use_approval_system].blank? &&
+	Setting.plugin_redmine_wktime[:wktime_use_approval_system].to_i == 1 %>
+	<% if !@wktime.nil? && @wktime.status == 's' %>
+		<%= submit_tag l(:button_wk_unsubmit), :name => 'wktime_unsubmit', :disabled => !(@row > 0)%>
+		<% if @user.id != User.current.id %>
+			<%= submit_tag l(:button_wk_approve), :name => 'wktime_approve', :disabled => !(@row > 0)%>
+			<%=h hidden_field_tag('wktime_notes', "") %>
+			<% # the jquery dialog box doesn't port the reject button value%>
+			<%=h hidden_field_tag('hidden_wk_reject', "") %>
+			<%= submit_tag l(:button_wk_reject), :name => 'wktime_reject', :disabled => !(@row > 0),
+				:onclick => "return showNotes();" %>
+		<% end %>
+	<% end %>
+<% end %>
+<% if !@wktime.nil? && @wktime.status == 'a' %>
+	<% if @user.id != User.current.id %>
+		<%= submit_tag l(:button_wk_unapprove), :id => 'wktime_unapprove', :name => 'wktime_unapprove'%>
+	<% end %>
+<% end %>
+<div class="splitcontentright">
+<div class="contextual">
+<% if @editable %>
+	<%= link_to l(:button_add_row), "javascript:addRow();", :class => 'icon icon-time-add' %>
+<% end %>
+</div>
+</div>
+<%= context_menu time_entries_context_menu_path %>

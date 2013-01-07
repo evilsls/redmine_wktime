@@ -1,0 +1,51 @@
+<%= javascript_include_tag 'index', :plugin => "redmine_wktime" %>
+
+<%= form_tag({:controller => 'wktime', :action => 'edit'}, :method => :post, :id => 'wktime_new') do %>
+
+<%=h hidden_field_tag('getusers_url', "#{url_for(:controller => 'wktime', :action => 'getusers')}") %>
+
+<h2><%= l(:label_wktime) %></h2>
+	 
+<%= error_messages_for 'time_entry' %>
+<%= back_url_hidden_field_tag %>
+
+<table>
+
+<% if !@manage_projects.blank? %>
+
+<tr>
+<th><%=l(:field_project)%></th>
+<td class="project" align="left"><%=h select_tag('project_id', 
+	options_for_select(options_for_wktime_project(@manage_projects)),
+	:onchange => "projChanged(this, #{User.current.id}, false);") %></td>
+</tr>
+<tr>
+<th><%=l(:label_member)%></th>
+<td>
+<%=h select_tag('user_id',
+	options_for_select( @selected_project.members.collect{|m| [ m.name, m.user_id ] },
+		:selected =>  @user.nil? ? User.current.id : @user.id)) %></td>
+</td>
+</tr>
+<% else %>
+<tr>
+<th width="100px" ><%=l(:field_user)%></th>
+<td>
+<%=h User.current.name %>
+<%=h hidden_field_tag('user_id', User.current.id) %>
+</td>
+</tr>
+<% end %>
+<tr>
+<th width="100px"><%=l(:field_start_date)%></th>
+<td><%=h text_field_tag('mon',@mon,:size => 10, :required => true) %><%= calendar_for('mon') %> 
+</td>
+</tr>
+<tr>
+<th width="100px"><%= l(:chkbox_prev_tmpl) %></th>
+<td><%= check_box_tag('prev_template', 1, true) %></td>
+</tr>
+</table>
+<%= submit_tag l(:button_continue), :id => 'wktime_add'%>
+
+<% end %>

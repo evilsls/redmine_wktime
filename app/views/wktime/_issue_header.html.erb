@@ -1,0 +1,45 @@
+<th align="left"><%= params[:enter_issue_id].blank? ? l(:field_project) : '' %></th>
+<th align="left"><%= l(:field_issue) %></th>
+<th align="left"><%= l(:field_activity) %></th>
+
+<% if !Setting.plugin_redmine_wktime['wktime_enter_comment_in_row'].blank? &&
+	Setting.plugin_redmine_wktime['wktime_enter_comment_in_row'].to_i == 1 %>
+	<th align="left"><%= l(:field_comments)%></th>
+<% else %>
+	<th align="left"></th>
+<% end %>
+
+<th align="left">
+<%	cf_value = nil
+if !Setting.plugin_redmine_wktime['wktime_enter_cf_in_row1'].blank? &&
+		(cf_value = @new_custom_field_values.detect { |cfv| 
+			cfv.custom_field.id == Setting.plugin_redmine_wktime['wktime_enter_cf_in_row1'].to_i }) != nil %>
+		
+			<%= cf_value.custom_field.name %>
+<%	end %>
+</th>
+
+<th align="left">
+<%	cf_value = nil
+if !Setting.plugin_redmine_wktime['wktime_enter_cf_in_row2'].blank? &&
+		(cf_value = @new_custom_field_values.detect { |cfv| 
+			cfv.custom_field.id == Setting.plugin_redmine_wktime['wktime_enter_cf_in_row2'].to_i }) != nil %>
+		
+			<%= cf_value.custom_field.name %>
+<%	end %>
+</th>
+
+<% for i in 0..6%>
+<th><%= l('date.abbr_day_names')[(i+1)%7] %><br /><%= I18n.localize(@mon+i, :format=>:short) unless @mon.nil? %></th>
+<% end %>
+<th></th>
+
+<% if !Setting.plugin_redmine_wktime['wktime_work_time_header'].blank? &&
+	Setting.plugin_redmine_wktime['wktime_work_time_header'].to_i == 1 %>
+
+<!-- Start, End and Total -->	
+
+	<%= render :partial => 'worktime_header', :locals => {:str => 'start', :isEditable => true, :value => '0:00'}%>
+	<%= render :partial => 'worktime_header', :locals => {:str => 'end', :isEditable => true, :value => '0:00'}%>
+	<%= render :partial => 'worktime_header', :locals => {:str => 'total', :isEditable => false, :value => '0:00'}%>
+<% end %>

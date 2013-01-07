@@ -1,0 +1,63 @@
+# Italian strings for wktime
+# Author Francesco Rossi
+it:
+  my_label: "My label"
+  label_wktime: Weekly Time
+  label_wk_project_dd_width: Larghezza dropdown dei progetti
+  label_wk_issue_dd_width: Larghezza dropdown degli issues
+  label_wk_actv_dd_width: Larghezza dropdown attività
+  label_wk_restr_max_hour: Forza ore massime per giorno
+  label_wk_max_hour_day: Ore massime per giorno
+  label_wk_page_width: Larghezza Pagina
+  label_wk_page_height: Altezza Pagina
+  label_wk_margin_top: Margine dall\'alto
+  label_wk_margin_bottom: Margine dal basso
+  label_wk_margin_left: Margine da sinistra
+  label_wk_margin_right: Margine da destra
+  label_wk_line_space: Linea di spaziatura
+  label_wk_header_logo: Logo header
+  label_wk_purchase_order: Ordine d\'acquisto
+  label_wk_signature: Firma
+  label_wk_submitted_by: Inserito da
+  label_wk_approved_by: Approvato da
+  
+  label_wk_enter_issue_id: Enter issue as ID
+  label_wk_work_time_header: Show work time header
+  label_wk_allow_blank_issue: Allow Blank Issue
+  
+  label_wk_enter_comment_in_row: Enter Comment in row
+  label_wk_enter_cf_in_row: Enter Custom Field in row
+  label_wk_use_detail_popup: Use Detail Time Entry Popup
+  label_wk_approval_system: Approval System
+  label_wk_use_approval_system: Use Approval System
+  label_wk_auto_approve: Auto approve Time Sheets
+  label_wk_submission_ack: Submission Acknowledgement Text  
+  label_wk_reject_reason: Reject Reason
+  
+  label_start: Inizio
+  label_end: Fine
+  label_remaining_hours: Ore rimanenti
+
+
+
+  button_new_wktime: Nuovo Timesheet
+  button_continue: Continua
+  button_add_row: Aggiungi riga
+  
+  button_wk_unsubmit: Unsubmit
+  button_wk_approve: Approve
+  button_wk_reject: Reject
+  button_wk_unapprove: Unapprove
+  chkbox_prev_tmpl: Modello della settimana precedente
+  chkbox_closed_issues: Includi gli issues chiusi della settimana precedente
+  
+  error_wktime_save_failed: "Impossibile salvare: %{value}"
+  error_wktime_save_nothing: Niente da salvare
+  error_not_permitted_save: Not permitted to Save
+
+  wk_status_new: New
+  wk_status_submitted: Submitted
+  wk_status_approved: Approved
+  wk_status_rejected: Rejected
+  
+
